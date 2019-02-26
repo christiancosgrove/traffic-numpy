@@ -15,6 +15,8 @@ class NagelSchreckenberg:
         self.velocities = None
         self.meanvel = None
 
+        self.vel_histogram = np.zeros(self.v + 1)
+
     """ Simultaneously computes `runs` simulations of the Nagel-Schreckenberg model"""
     def run(self, runs, save_states=False):
 
@@ -64,6 +66,9 @@ class NagelSchreckenberg:
             if t > self.T // 2:
                 meanvel.append(np.mean(vel[state > 0]))
 
+            # print(np.histogram(vel, self.v))
+            self.vel_histogram += np.histogram(vel[state > 0], self.v + 1)[0]
+
             if save_states:
                 self.states.append(np.array(state))
                 self.velocities.append(np.array(vel))
@@ -77,3 +82,6 @@ class NagelSchreckenberg:
 
     def get_states(self):
         return self.states, self.velocities
+
+    def get_velocity_histogram(self):
+        return self.vel_histogram / np.sum(self.vel_histogram)
